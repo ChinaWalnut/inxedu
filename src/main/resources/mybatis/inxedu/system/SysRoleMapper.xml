@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="SysRoleMapper" >
+	<sql id="sys_role_column">
+	sys_role.ROLE_ID,
+	sys_role.ROLE_NAME,
+	sys_role.CREATE_TIME
+	</sql>
+	
+	<sql id="sys_role_property">
+	#{roleId},
+	#{roleName},
+	#{createTime}
+	</sql>
+	
+	<sql id="sys_role_function_column">
+	sys_role_FUNCTION.ROLE_ID,
+	sys_role_FUNCTION.FUNCTION_ID
+	</sql>
+	<resultMap type="SysRole" id="SysRoleResult">
+	<result property="roleId" column="ROLE_ID"/>
+	<result property="roleName" column="ROLE_NAME"/>
+	<result property="createTime" column="CREATE_TIME"/>
+	</resultMap>
+	
+	<insert id="createRoel" parameterType="SysRole" useGeneratedKeys="true" keyColumn="ROLE_ID" keyProperty="roleId">
+	INSERT INTO sys_role(<include refid="sys_role_column"/>)
+	VALUE(<include refid="sys_role_property"/>)
+	</insert>
+	
+	<update id="updateRole" parameterType="SysRole">
+	UPDATE sys_role SET 
+	sys_role.ROLE_NAME=#{roleName}
+	WHERE sys_role.ROLE_ID=#{roleId}
+	</update>
+	
+	<select id="queryAllRoleList" resultMap="SysRoleResult">
+	SELECT <include refid="sys_role_column"/> FROM sys_role
+	</select>
+	
+	<delete id="deleteRoleByIds" parameterType="java.lang.String">
+	DELETE FROM sys_role WHERE sys_role.ROLE_ID IN(${value})
+	</delete>
+	
+	<delete id="deleteRoleFunctionByRoleId" parameterType="int">
+	DELETE FROM sys_role_FUNCTION WHERE sys_role_FUNCTION.ROLE_ID=#{value}
+	</delete>
+
+	<insert id="createRoleFunction" parameterType="java.lang.String">
+	INSERT INTO sys_role_FUNCTION(<include refid="sys_role_function_column"/>)
+	VALUE ${value}
+	</insert>
+	
+	<select id="queryRoleFunctionIdByRoleId" parameterType="int" resultType="int">
+	SELECT sys_role_FUNCTION.FUNCTION_ID FROM sys_role_FUNCTION WHERE sys_role_FUNCTION.ROLE_ID=#{value}
+	</select>
+</mapper>
